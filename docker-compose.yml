@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  currencydealer_postgres:
+    image: postgres:15.1
+
+  currencydealer_rabbitmq:
+    image: rabbitmq:3-management
+
+  currencydealer_crawler:
+    image: ${DOCKER_REGISTRY-}currencydealercrawler
+    build:
+      context: .
+      dockerfile: Crawler/Dockerfile
+      
+  currencydealer_converter:
+    image: ${DOCKER_REGISTRY-}currencydealerconverter
+    build:
+      context: .
+      dockerfile: Converter/Dockerfile
+
+  currencydealer_storage:
+    image: ${DOCKER_REGISTRY-}currencydealerstorage
+    build:
+      context: .
+      dockerfile: Storage/Dockerfile

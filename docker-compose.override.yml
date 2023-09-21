@@ -1,0 +1,73 @@
+version: '3.4'
+
+services:
+  currencydealer_postgres:
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Passw0rd 
+    ports:
+      - "5432:5432"
+    networks:
+      - currencydealer_network
+    volumes:      
+      - ~/.docker-conf/postgresql/data/:/var/lib/postgresql/data
+      
+  currencydealer_rabbitmq:
+    ports:
+      - "15672:15672" 
+      - "5672:5672"
+      - "5673:5673"
+    networks:
+      - currencydealer_network
+    volumes:      
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+  currencydealer_crawler:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - currencydealer_network
+    ports:
+      - "5000:80"
+    env_file:
+      - env.crawler
+    depends_on:
+      currencydealer_postgres:
+        condition: service_started
+      currencydealer_rabbitmq:
+        condition: service_started
+
+  currencydealer_converter:
+    environment:
+      - DOTNET_ENVIRONMENT=Development
+    networks:
+      - currencydealer_network
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    env_file:
+      - env.converter
+    depends_on:
+      currencydealer_rabbitmq:
+        condition: service_started
+
+  currencydealer_storage:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - currencydealer_network
+    ports:
+      - "7000:80"
+    env_file:
+      - env.storage
+    depends_on:
+      currencydealer_postgres:
+        condition: service_started
+      currencydealer_rabbitmq:
+        condition: service_started
+
+networks:
+  currencydealer_network:
+    name: currencydealer
+    driver: bridge

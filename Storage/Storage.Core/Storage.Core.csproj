@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Storage.Database\Storage.Database.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="ExchangeTypes">
+	    <HintPath>..\..\ExchangeTypes\ExchangeTypes\bin\Debug\net7.0\ExchangeTypes.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
+</Project>
